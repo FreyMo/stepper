@@ -24,7 +24,6 @@ struct DriveSettings
     const int maxAcceleration;         // in steps per second squared
     const int maxVelocity;             // in steps per second
 
-    DriveSettings();
     DriveSettings(int stepsPerRevolution, int maxAcceleration, int maxVelocity);
 };
 

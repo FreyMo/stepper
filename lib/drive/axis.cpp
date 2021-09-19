@@ -18,7 +18,34 @@ Axis::Axis(
 
 void Axis::Reference()
 {
-    // NOT IMPLEMENTED
+    if (!this->isRunning)
+    {
+        this->isRunning = true;
+
+        // reference...
+
+        this->isRunning = false;
+    }
+}
+
+void Axis::ReferenceAsync()
+{
+    xTaskCreatePinnedToCore(
+        Axis::ReferenceStatic,
+        "Reference",
+        5000,
+        this,
+        1,
+        NULL,
+        0 // SHOULD BE SET AT START
+    );
+}
+
+void Axis::ReferenceStatic(void* parameter)
+{
+    auto axis = static_cast<Axis*>(parameter);
+    axis->Reference();
+    vTaskDelete(NULL);
 }
 
 float Axis::DriveTo(float position)

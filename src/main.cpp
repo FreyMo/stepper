@@ -1,36 +1,76 @@
 #include <Arduino.h>
 #include <drive.h>
 #include <axis.h>
+#include <display.h>
+#include <display_reporter.h>
 
 #include <communication.h>
 
-std::unique_ptr<Axis> axis;
+std::unique_ptr<Axis> xAxis;
+std::unique_ptr<Axis> yAxis;
 std::unique_ptr<Communication> communication;
+std::unique_ptr<DisplayReporter> displayReporter;
 
-IRAM_ATTR void interrupt() {
-  axis->Stop();
-}
+// IRAM_ATTR void interrupt() {
+//   axis->Stop();
+// }
 
-void limitAxis(const AxisPins& pins)
-{
-  pinMode(pins.limitSwitch, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(pins.limitSwitch), interrupt, RISING);
-}
+// void limitAxis(const AxisPins& pins)
+// {
+//   pinMode(pins.limitSwitch, INPUT_PULLUP);
+//   attachInterrupt(digitalPinToInterrupt(pins.limitSwitch), interrupt, RISING);
+// }
 
-void setup()
+void setupSerial()
 {
   Serial.setTimeout(5); // default is 1000 which slows down the communication drastically
   Serial.begin(115200);
   Serial.println("Started up");
-  
+
   communication = std::unique_ptr<Communication>();
-  
-  auto drive = std::unique_ptr<Drive>(new Drive(DriveSettings(800, 50, 3200), DrivePins(GPIO_NUM_16, GPIO_NUM_4, GPIO_NUM_17)));
+}
+
+void setupXAxis()
+{
+  auto drivePins = DrivePins(GPIO_NUM_16, GPIO_NUM_4, GPIO_NUM_17);
+  auto driveSettings = DriveSettings(800, 50, 3200);
+  auto drive = std::unique_ptr<Drive>(new Drive(driveSettings, drivePins));
 
   auto axisPins = AxisPins(GPIO_NUM_13);
-  axis = std::unique_ptr<Axis>(new Axis(std::move(drive), AxisSettings(0.1f), axisPins));
-  limitAxis(axisPins);
+  auto axisSettings = AxisSettings(0.1f);
+  xAxis = std::unique_ptr<Axis>(new Axis(std::move(drive), axisSettings, axisPins));
 }
+
+void setupYAxis()
+{
+  auto drivePins = DrivePins(GPIO_NUM_21, GPIO_NUM_22, GPIO_NUM_23);
+  auto driveSettings = DriveSettings(800, 50, 3200);
+  auto drive = std::unique_ptr<Drive>(new Drive(driveSettings, drivePins));
+
+  auto axisPins = AxisPins(GPIO_NUM_25);
+  auto axisSettings = AxisSettings(0.1f);
+  xAxis = std::unique_ptr<Axis>(new Axis(std::move(drive), axisSettings, axisPins));
+}
+
+void setup()
+{
+  setupSerial();
+  setupXAxis();
+  setupYAxis();
+
+  delay(50);
+  displayReporter = std::unique_ptr<DisplayReporter>(new DisplayReporter(5.0F));
+  displayReporter->Report(-99.7);
+  delay(500);
+  displayReporter->Report(1000);
+  delay(500);
+  displayReporter->Report(999.5);
+  delay(500);
+  displayReporter->Report(-100);
+  delay(500);
+}
+
+float counter = -150.7;
 
 void loop()
 {
@@ -47,6 +87,7 @@ void loop()
     }
   }
 
-  // axis->DriveFor(1.0);
-  // delay(500);
+  counter++;
+  if (counter > 1400) { counter -= 1512.3; }
+  displayReporter->Report(counter);
 }

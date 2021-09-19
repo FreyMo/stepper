@@ -1,15 +1,9 @@
 #include <Arduino.h>
 #include <drive.h>
+#include <Wire.h>
 
 DrivePins::DrivePins(uint8_t enablePin, uint8_t directionPin, uint8_t stepPin) :
     enable(enablePin), direction(directionPin), step(stepPin) {}
-
-DriveSettings::DriveSettings() : DriveSettings(
-    400,
-    40,
-    50)
-{
-}
 
 DriveSettings::DriveSettings(
     int stepsPerRevolution,
