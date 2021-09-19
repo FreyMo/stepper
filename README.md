@@ -1,4 +1,8 @@
-# How to
+# Stepper motor driver
+
+> WORK IN PROGRESS
+
+## How to
 
 1. Plug in your device
 2. Install [drivers](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) 

@@ -3,6 +3,7 @@
 #include <axis.h>
 #include <display.h>
 #include <display_reporter.h>
+#include <serial_reporter.h>
 
 #include <communication.h>
 
@@ -10,6 +11,7 @@ std::unique_ptr<Axis> xAxis;
 std::unique_ptr<Axis> yAxis;
 std::unique_ptr<Communication> communication;
 std::unique_ptr<DisplayReporter> displayReporter;
+std::unique_ptr<SerialReporter> serialReporter;
 
 // IRAM_ATTR void interrupt() {
 //   axis->Stop();
@@ -59,15 +61,9 @@ void setup()
   setupYAxis();
 
   delay(50);
-  displayReporter = std::unique_ptr<DisplayReporter>(new DisplayReporter(5.0F));
-  displayReporter->Report(-99.7);
-  delay(500);
-  displayReporter->Report(1000);
-  delay(500);
-  displayReporter->Report(999.5);
-  delay(500);
-  displayReporter->Report(-100);
-  delay(500);
+  displayReporter = std::unique_ptr<DisplayReporter>(new DisplayReporter(10.0F));
+  delay(50);
+  serialReporter = std::unique_ptr<SerialReporter>(new SerialReporter(2.0F));
 }
 
 float counter = -150.7;
@@ -87,7 +83,15 @@ void loop()
     }
   }
 
+  auto start = micros();
+
   counter++;
   if (counter > 1400) { counter -= 1512.3; }
   displayReporter->Report(counter);
+  auto status = Status("axisY", counter);
+  serialReporter->Report(status);
+
+  auto stop = micros();
+
+  Serial.println(stop - start);
 }
