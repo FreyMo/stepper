@@ -75,11 +75,11 @@ void loop()
     auto request = communication->Receive(Serial);
     if (request.hasValue)
     {
-      communication->Transmit(Response(request.value.id, request.value.action), Serial);
+      communication->Transmit(Response(request.value.id, ResponseStatus::ok), Serial);
     }
     else
     {
-      communication->Transmit(Response("NONE", "failure"), Serial);
+      communication->Transmit(Response("", ResponseStatus::error), Serial);
     }
   }
 
