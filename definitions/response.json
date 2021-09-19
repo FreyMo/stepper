@@ -1,0 +1,12 @@
+[
+    {
+        "type": "response",
+        "id": "<guid>",
+        "status": "ok"
+    },
+    {
+        "type": "response",
+        "id": "<guid>",
+        "status": "error"
+    }   
+]

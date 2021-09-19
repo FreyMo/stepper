@@ -1,0 +1,34 @@
+[
+    {
+        "type": "message",
+        "event": "positionChanged",
+        "payload": {
+            "axisX": 130,
+            "axisY": 50
+        }
+    },    
+    {
+        "type": "message",
+        "event": "positionReached",
+        "payload": {
+            "axisX": 130,
+            "axisY": 50
+        }
+    },    
+    {
+        "type": "message",
+        "event": "axisReferenced",
+        "payload": {
+            "axisX": 0,
+            "axisY": 0
+        }
+    },
+    {
+        "type": "message",
+        "event": "limitReached",
+        "payload": {
+            "axisX": true,
+            "axisY": false
+        }
+    }    
+]

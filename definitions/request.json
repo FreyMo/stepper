@@ -1,0 +1,29 @@
+[
+
+    {
+        "type": "request",
+        "id": "<guid>",
+        "action": "reference",
+        "payload": {
+            "referenceSpeed": 200,
+            "direction": "positive"
+        }
+    },
+    {
+        "type": "request",
+        "id": "<guid>",
+        "action": "driveTo",
+        "payload": {
+            "axisX": {
+                "position": 130,
+                "velocity": 200,
+                "acceleration": 150
+            },
+            "axisY": {
+                "position": 50,
+                "velocity": 100,
+                "acceleration": 150
+            }
+        }
+    }
+]
