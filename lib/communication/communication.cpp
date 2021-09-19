@@ -1,13 +1,12 @@
 #include <ArduinoJson.h>
 #include <communication.h>
 
-ReferenceRequest ParseReferenceRequest(DynamicJsonDocument& json)
+ReferenceRequest ParseReferenceRequest(StaticJsonDocument<512>& json)
 {
     auto request = ReferenceRequest();
+
     request.id     = json["id"].as<String>();
     request.action = json["action"].as<String>();
-
-    // request.payload = ReferencePayload();
 
     request.payload.referenceSpeed = json["payload"]["referenceSpeed"].as<float>();
     request.payload.direction      = json["payload"]["direction"].as<String>();
@@ -15,16 +14,13 @@ ReferenceRequest ParseReferenceRequest(DynamicJsonDocument& json)
     return request;
 }
 
-DriveToRequest ParseDriveToRequest(DynamicJsonDocument& json)
+DriveToRequest ParseDriveToRequest(StaticJsonDocument<512>& json)
 {
     auto request = DriveToRequest();
+    
     request.id     = json["id"].as<String>();
     request.action = json["action"].as<String>();
 
-    // request.payload = DriveToPayload();
-    // request.payload.axisX = DriveToAxis();
-    // request.payload.axisY = DriveToAxis();
-    
     request.payload.axisX.position     = json["payload"]["axisX"]["position"].as<float>();
     request.payload.axisX.velocity     = json["payload"]["axisX"]["velocity"].as<float>();
     request.payload.axisX.acceleration = json["payload"]["axisX"]["acceleration"].as<float>();
@@ -38,8 +34,8 @@ DriveToRequest ParseDriveToRequest(DynamicJsonDocument& json)
 
 Optional<RequestBase> Communication::Receive(Stream& stream)
 {
-    DynamicJsonDocument json(this->size);
-
+    StaticJsonDocument<512> json;
+    
     auto error = deserializeJson(json, stream);
     if (error.code() != ArduinoJson::DeserializationError::Code::Ok)
     {
@@ -47,7 +43,6 @@ Optional<RequestBase> Communication::Receive(Stream& stream)
     }
 
     auto _ = stream.readString();
-
     auto action = json["action"].as<String>();
 
     if (action == ReferenceRequest::actionString)
@@ -64,11 +59,11 @@ Optional<RequestBase> Communication::Receive(Stream& stream)
 
 void Communication::Transmit(const Response& response, Stream& stream)
 {
-    DynamicJsonDocument json(this->size);
+    StaticJsonDocument<128> json;
 
-    json["type"] = Response::type;
+    json["type"] = Response::type.c_str();
     json["id"] = response.id;
-    json["status"] = response.status;
+    json["status"] = response.status.c_str();
     
     serializeJson(json, stream);
     stream.println();

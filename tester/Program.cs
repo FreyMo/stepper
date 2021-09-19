@@ -44,12 +44,11 @@ public class PortChat
                 // About 800 chars is the limit for one message
                 var myOpt = new Request
                 {
-                    Id = Guid.NewGuid().ToString() + "ASDSDGJDOIJGLRSKFLJGLSE%6666666666666666666675675867867856897896689oziukjmvhbdfgvdrdgfdrfcsrdthjhtresdghgjuft6ztgfdrtzujhgfdjgjjfdklggsdtrgvdrbtfjtfhvgdtrcfedwsadfcdvgbgzftgvrdwssdefrvgtbgoioigfudofiugoixdfugodigjkdflkjfdkjdfjkfdkjlkjjkljkldjkljkljklgjfsdjkldfsjklfsdjkfsdjksdfljksfdjlksdfjklfsdjklfsdjklsfdjklsfdjlkfsdjklfsdjlkfsdlkjfsdjkldsfjlkfsdjlksfdadfcdvgbgzftgvrdwssdefrvgtbgoioigfudofiugoixdfugodigjkdflkjfdkjdfjkfdkjlkjjkljkldjkljkljklgjfsdjkldfsjklfsdjkfsdjksdfljksfdjlksdfjklfsdjklfsdjklsfdjklsfdjlkfsdjklfsdjlkfsdlkjfsdjkldsfjlkfsdjlksfdjlksdfjklsfdjklsfdjkdsfjklfjkljkldjkljklfkjldfsddsfhsdfsfdsdfsdfsfdkhsfdsfdsfdhsfdsfdhkfsdsfdhsdfksfdhfdssdfkhfdssdfhfrwviozf94875t9084fr",
-                    Action = "run!",
-                    Config = new Config
+                    Id = Guid.NewGuid().ToString(),
+                    Payload = new Payload
                     {
-                        ValueA = "123",
-                        ValueB = "667"
+                        Direction = "positive",
+                        ReferenceSpeed = 313
                     }
                 };
 
@@ -90,11 +89,23 @@ public class PortChat
         [JsonPropertyName("id")]
         public string Id { get; set; }
 
-        [JsonPropertyName("action")]
-        public string Action { get; set; }
+        [JsonPropertyName("type")]
+        public string Type => "request";
 
-        [JsonPropertyName("config")]
-        public Config Config { get; set; }
+        [JsonPropertyName("action")]
+        public string Action => "reference";
+
+        [JsonPropertyName("payload")]
+        public Payload Payload { get; set; }
+    }
+
+    public class Payload
+    {
+        [JsonPropertyName("referenceSpeed")]
+        public double ReferenceSpeed { get; set; }
+
+        [JsonPropertyName("direction")]
+        public string Direction { get; set; }
     }
 
     public class Config

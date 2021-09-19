@@ -63,7 +63,7 @@ void setup()
   delay(50);
   displayReporter = std::unique_ptr<DisplayReporter>(new DisplayReporter(10.0F));
   delay(50);
-  serialReporter = std::unique_ptr<SerialReporter>(new SerialReporter(2.0F));
+  serialReporter = std::unique_ptr<SerialReporter>(new SerialReporter(5.0F));
 }
 
 float counter = -150.7;
@@ -75,23 +75,17 @@ void loop()
     auto request = communication->Receive(Serial);
     if (request.hasValue)
     {
-      communication->Transmit(Response(request.value.id, ResponseStatus::ok), Serial);
+      communication->Transmit(Response(request.value.id, "ok"), Serial);
     }
     else
     {
-      communication->Transmit(Response("", ResponseStatus::error), Serial);
+      communication->Transmit(Response("", "error"), Serial);
     }
   }
-
-  auto start = micros();
 
   counter++;
   if (counter > 1400) { counter -= 1512.3; }
   displayReporter->Report(counter);
   auto status = Status("axisY", counter);
   serialReporter->Report(status);
-
-  auto stop = micros();
-
-  Serial.println(stop - start);
 }

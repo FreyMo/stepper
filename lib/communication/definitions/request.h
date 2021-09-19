@@ -23,8 +23,6 @@ struct ReferenceRequest : public Request<ReferencePayload>
     static const String actionString;
 };
 
-const String ReferenceRequest::actionString = "reference";
-
 struct DriveToAxis
 {
     float position;
@@ -42,5 +40,3 @@ struct DriveToRequest : public Request<DriveToPayload>
 {
     static const String actionString;
 };
-
-const String DriveToRequest::actionString = "driveTo";

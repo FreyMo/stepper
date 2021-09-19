@@ -6,8 +6,6 @@ struct MessageBase
     static const String type;
 };
 
-const String MessageBase::type = "message";
-
 template <typename T>
 struct Message : public MessageBase
 {
