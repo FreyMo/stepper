@@ -25,7 +25,7 @@ std::unique_ptr<SerialReporter> serialReporter;
 
 void setupSerial()
 {
-  Serial.setTimeout(5); // default is 1000 which slows down the communication drastically
+  Serial.setTimeout(5);
   Serial.begin(115200);
   Serial.println("Started up");
 
@@ -60,13 +60,11 @@ void setup()
   setupXAxis();
   setupYAxis();
 
-  delay(50);
-  displayReporter = std::unique_ptr<DisplayReporter>(new DisplayReporter(10.0F));
-  delay(50);
-  serialReporter = std::unique_ptr<SerialReporter>(new SerialReporter(5.0F));
+  displayReporter = std::unique_ptr<DisplayReporter>(new DisplayReporter(150.0f));
+  serialReporter = std::unique_ptr<SerialReporter>(new SerialReporter(0.5f));
 }
 
-float counter = -150.7;
+float counter = -150.7f;
 
 void loop()
 {
@@ -85,7 +83,12 @@ void loop()
 
   counter++;
   if (counter > 1400) { counter -= 1512.3; }
-  displayReporter->Report(counter);
-  auto status = Status("axisY", counter);
-  serialReporter->Report(status);
+
+  PositionChangedMessage positionChanged;
+  
+  positionChanged.payload.axisX = counter;
+  positionChanged.payload.axisY = counter / 123;
+
+  displayReporter->Report(positionChanged);
+  serialReporter->Report(positionChanged);
 }

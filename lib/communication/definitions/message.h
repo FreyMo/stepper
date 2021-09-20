@@ -9,6 +9,7 @@ struct MessageBase
 template <typename T>
 struct Message : public MessageBase
 {
+    T payload;
 };
 
 struct PositionChangedPayload
@@ -19,4 +20,5 @@ struct PositionChangedPayload
 
 struct PositionChangedMessage : public Message<PositionChangedPayload>
 {
+    static const String eventString;
 };

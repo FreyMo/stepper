@@ -7,7 +7,7 @@ Display::Display(uint8_t i2cAddress) : matrix(Adafruit_7segment())
 
 void Display::Show(float position)
 {
-    if (position > 999.9F || position < -99.9F)
+    if (position > 999.9f || position < -99.9f)
     {
         this->matrix.printError();
     } else 

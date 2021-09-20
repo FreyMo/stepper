@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 #include <communication.h>
 
-ReferenceRequest ParseReferenceRequest(StaticJsonDocument<512>& json)
+ReferenceRequest ParseReferenceRequest(const StaticJsonDocument<512>& json)
 {
     auto request = ReferenceRequest();
 
@@ -14,7 +14,7 @@ ReferenceRequest ParseReferenceRequest(StaticJsonDocument<512>& json)
     return request;
 }
 
-DriveToRequest ParseDriveToRequest(StaticJsonDocument<512>& json)
+DriveToRequest ParseDriveToRequest(const StaticJsonDocument<512>& json)
 {
     auto request = DriveToRequest();
     
@@ -61,9 +61,9 @@ void Communication::Transmit(const Response& response, Stream& stream)
 {
     StaticJsonDocument<128> json;
 
-    json["type"] = Response::type.c_str();
+    json["type"] = Response::type;
     json["id"] = response.id;
-    json["status"] = response.status.c_str();
+    json["status"] = response.status;
     
     serializeJson(json, stream);
     stream.println();

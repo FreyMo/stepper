@@ -2,19 +2,17 @@
 
 #include <reporter.h>
 #include <display.h>
+#include <definitions/message.h>
 
-class DisplayReporter : public Reporter<float>
+class DisplayReporter : public Reporter<const PositionChangedMessage&>
 {
 private:
-    Display display;
+    Display xAxisDisplay;
+    Display yAxisDisplay;
 
 public:
-    DisplayReporter(float frequencyInHertz) : Reporter<float>(frequencyInHertz), display(Display()) {}
-protected:
-    virtual void ReportInternal(float value) override;
-};
+    DisplayReporter(float frequencyInHertz);
 
-void DisplayReporter::ReportInternal(float value)
-{
-    display.Show(value);
-}
+protected:
+    virtual void ReportInternal(const PositionChangedMessage& value) override;
+};

@@ -52,11 +52,11 @@ public class PortChat
                     }
                 };
 
-                Console.WriteLine("Writing " + JsonSerializer.Serialize(myOpt));
-
-                Log("Writing");
                 _serialPort.WriteLine(JsonSerializer.Serialize(myOpt));
-                Log("Written");
+
+                Log("Write");
+                Console.WriteLine(JsonSerializer.Serialize(myOpt));
+                Console.WriteLine();
             }
         }
 
@@ -79,6 +79,7 @@ public class PortChat
 
                 Log("Read");
                 Console.WriteLine(message);
+                Console.WriteLine();
             }
             catch (TimeoutException) { }
         }
