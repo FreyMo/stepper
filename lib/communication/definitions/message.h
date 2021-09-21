@@ -14,8 +14,8 @@ struct Message : public MessageBase
 
 struct PositionChangedPayload
 {
-    float axisX;
-    float axisY;
+    float xAxis;
+    float yAxis;
 };
 
 struct PositionChangedMessage : public Message<PositionChangedPayload>

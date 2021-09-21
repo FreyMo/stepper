@@ -14,12 +14,12 @@
         "id": "<guid>",
         "action": "driveTo",
         "payload": {
-            "axisX": {
+            "xAxis": {
                 "position": 130,
                 "velocity": 200,
                 "acceleration": 150
             },
-            "axisY": {
+            "yAxis": {
                 "position": 50,
                 "velocity": 100,
                 "acceleration": 150

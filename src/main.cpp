@@ -1,94 +1,84 @@
 #include <Arduino.h>
-#include <drive.h>
-#include <axis.h>
-#include <display.h>
-#include <display_reporter.h>
-#include <serial_reporter.h>
-
 #include <communication.h>
+#include <application.h>
+#include <memory>
 
-std::unique_ptr<Axis> xAxis;
-std::unique_ptr<Axis> yAxis;
+#define HIGH_PRIORITY 1
+#define LOW_PRIORITY 0
+#define APPLICATION_CORE 0
+#define COMMUNICATION_CORE 1
+
 std::unique_ptr<Communication> communication;
-std::unique_ptr<DisplayReporter> displayReporter;
-std::unique_ptr<SerialReporter> serialReporter;
+std::unique_ptr<Application> application;
 
-// IRAM_ATTR void interrupt() {
-//   axis->Stop();
-// }
+TaskHandle_t communicationTask;
+TaskHandle_t applicationTask;
 
-// void limitAxis(const AxisPins& pins)
-// {
-//   pinMode(pins.limitSwitch, INPUT_PULLUP);
-//   attachInterrupt(digitalPinToInterrupt(pins.limitSwitch), interrupt, RISING);
-// }
+void RunApplication(void* parameters) {
+    auto app = static_cast<Application*>(parameters);
 
-void setupSerial()
-{
-  Serial.setTimeout(5);
-  Serial.begin(115200);
-  Serial.println("Started up");
+    while (true)
+    {
+        app->Tick();
 
-  communication = std::unique_ptr<Communication>();
+        vTaskDelay(1);
+    }
 }
 
-void setupXAxis()
-{
-  auto drivePins = DrivePins(GPIO_NUM_16, GPIO_NUM_4, GPIO_NUM_17);
-  auto driveSettings = DriveSettings(800, 50, 3200);
-  auto drive = std::unique_ptr<Drive>(new Drive(driveSettings, drivePins));
+void RunCommunication(void* parameters) {
+    auto comm = static_cast<Communication*>(parameters);
 
-  auto axisPins = AxisPins(GPIO_NUM_13);
-  auto axisSettings = AxisSettings(0.1f);
-  xAxis = std::unique_ptr<Axis>(new Axis(std::move(drive), axisSettings, axisPins));
-}
+    while (true)
+    {
+        if (Serial.available() > 0)
+        {
+            auto request = comm->Receive(Serial);
+            if (request.hasValue)
+            {
+                comm->Transmit(Response(request.value.id, "ok"), Serial);
+                application->Handle(request.value);
+            }
+            else
+            {
+                comm->Transmit(Response("", "error"), Serial);
+            }
+        }
 
-void setupYAxis()
-{
-  auto drivePins = DrivePins(GPIO_NUM_21, GPIO_NUM_22, GPIO_NUM_23);
-  auto driveSettings = DriveSettings(800, 50, 3200);
-  auto drive = std::unique_ptr<Drive>(new Drive(driveSettings, drivePins));
-
-  auto axisPins = AxisPins(GPIO_NUM_25);
-  auto axisSettings = AxisSettings(0.1f);
-  xAxis = std::unique_ptr<Axis>(new Axis(std::move(drive), axisSettings, axisPins));
+        vTaskDelay(1);
+    }
 }
 
 void setup()
 {
-  setupSerial();
-  setupXAxis();
-  setupYAxis();
+    communication = std::unique_ptr<Communication>(new Communication());
+    application = std::unique_ptr<Application>(new Application());
 
-  displayReporter = std::unique_ptr<DisplayReporter>(new DisplayReporter(150.0f));
-  serialReporter = std::unique_ptr<SerialReporter>(new SerialReporter(0.5f));
+    disableCore0WDT();
+    disableCore1WDT();
+
+    vTaskPrioritySet(NULL, LOW_PRIORITY);
+
+    xTaskCreatePinnedToCore(
+        RunApplication,
+        "RunApplication",
+        10000,
+        application.get(),
+        HIGH_PRIORITY,
+        &applicationTask,
+        APPLICATION_CORE);
+
+    xTaskCreatePinnedToCore(
+        RunCommunication,
+        "RunCommunication",
+        50000,
+        communication.get(),
+        HIGH_PRIORITY,
+        &communicationTask,
+        COMMUNICATION_CORE
+    );
 }
-
-float counter = -150.7f;
 
 void loop()
 {
-  if (Serial.available() > 0)
-  {
-    auto request = communication->Receive(Serial);
-    if (request.hasValue)
-    {
-      communication->Transmit(Response(request.value.id, "ok"), Serial);
-    }
-    else
-    {
-      communication->Transmit(Response("", "error"), Serial);
-    }
-  }
-
-  counter++;
-  if (counter > 1400) { counter -= 1512.3; }
-
-  PositionChangedMessage positionChanged;
-  
-  positionChanged.payload.axisX = counter;
-  positionChanged.payload.axisY = counter / 123;
-
-  displayReporter->Report(positionChanged);
-  serialReporter->Report(positionChanged);
+    vTaskDelay(1);
 }

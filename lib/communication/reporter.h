@@ -8,7 +8,6 @@ class Reporter
 private:
     const float frequencyInHertz;
     const float microsPerReport;
-
     unsigned long microsAtStart;
 
 protected:

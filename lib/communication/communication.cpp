@@ -1,7 +1,16 @@
 #include <ArduinoJson.h>
 #include <communication.h>
 
-ReferenceRequest ParseReferenceRequest(const StaticJsonDocument<512>& json)
+typedef StaticJsonDocument<512> RequestJsonDocument;
+typedef StaticJsonDocument<128> ResponseJsonDocument;
+
+Communication::Communication()
+{
+    Serial.setTimeout(5);
+    Serial.begin(115200);
+}
+
+ReferenceRequest ParseReferenceRequest(const RequestJsonDocument& json)
 {
     auto request = ReferenceRequest();
 
@@ -14,7 +23,7 @@ ReferenceRequest ParseReferenceRequest(const StaticJsonDocument<512>& json)
     return request;
 }
 
-DriveToRequest ParseDriveToRequest(const StaticJsonDocument<512>& json)
+DriveToRequest ParseDriveToRequest(const RequestJsonDocument& json)
 {
     auto request = DriveToRequest();
     
@@ -34,7 +43,7 @@ DriveToRequest ParseDriveToRequest(const StaticJsonDocument<512>& json)
 
 Optional<RequestBase> Communication::Receive(Stream& stream)
 {
-    StaticJsonDocument<512> json;
+    RequestJsonDocument json;
     
     auto error = deserializeJson(json, stream);
     if (error.code() != ArduinoJson::DeserializationError::Code::Ok)
@@ -59,10 +68,10 @@ Optional<RequestBase> Communication::Receive(Stream& stream)
 
 void Communication::Transmit(const Response& response, Stream& stream)
 {
-    StaticJsonDocument<128> json;
+    ResponseJsonDocument json;
 
-    json["type"] = Response::type;
-    json["id"] = response.id;
+    json["type"]   = Response::type;
+    json["id"]     = response.id;
     json["status"] = response.status;
     
     serializeJson(json, stream);

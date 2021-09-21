@@ -17,8 +17,8 @@ void SerialReporter::ReportInternal(const PositionChangedMessage& value)
 
     auto payload = json.createNestedObject("payload");
     
-    payload["axisX"] = value.payload.axisX;
-    payload["axisY"] = value.payload.axisY;
+    payload["xAxis"] = value.payload.xAxis;
+    payload["yAxis"] = value.payload.yAxis;
 
     serializeJson(json, Serial);
     Serial.println();

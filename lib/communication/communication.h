@@ -7,9 +7,8 @@
 
 class Communication
 {
-private:
-    const size_t size = 512;
 public:
+    Communication();
     Optional<RequestBase> Receive(Stream& stream);
     void Transmit(const Response& response, Stream& stream);
 };
