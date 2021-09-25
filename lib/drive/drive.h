@@ -33,19 +33,19 @@ struct DriveMath
 };
 
 class Drive {
-private:
-    const DriveSettings settings;
-    const DrivePins pins;
-    bool isAllowedToRun = false;
+    private:
+        const DriveSettings settings;
+        const DrivePins pins;
+        bool isAllowedToRun = false;
 
-    void SetDirection(Direction direction);
-    void SetStep(uint8_t value);
-public:
-    Drive(const DriveSettings settings, const DrivePins pins);
+        void SetDirection(Direction direction);
+        void SetStep(uint8_t value);
+    public:
+        Drive(const DriveSettings settings, const DrivePins pins);
 
-    int RotateBySteps(int steps, Direction direction);
-    float RotateByRevolutions(float revolutions, Direction direction);
-    
-    void Allow();
-    void Disallow();
+        int RotateBySteps(int steps, Direction direction);
+        float RotateByRevolutions(float revolutions, Direction direction);
+        
+        void Allow();
+        void Disallow();
 };

@@ -3,7 +3,7 @@
 #include <application.h>
 #include <memory>
 #include <message_queues.h>
-#include <queue_processor.h>
+#include <message_consumer.h>
 
 #include <ArduinoJson.h>
 
@@ -12,9 +12,11 @@
 #define APPLICATION_CORE 1
 #define COMMUNICATION_CORE 0
 
-std::unique_ptr<Communication> communication;
-std::unique_ptr<Application> application;
-std::unique_ptr<QueueProcessor> queueProcessor;
+using namespace std;
+
+unique_ptr<Communication> communication;
+unique_ptr<Application> application;
+unique_ptr<MessageConsumer> messageConsumer;
 
 TaskHandle_t communicationTask;
 TaskHandle_t applicationTask;
@@ -55,7 +57,7 @@ void RunCommunication(void* parameters) {
 void ProcessMessageQueues(void* parameters) {
     while (true)
     {
-        queueProcessor->ProcessMessageQueues();
+        messageConsumer->Consume();
 
         vTaskDelay(1);
     }
@@ -63,9 +65,9 @@ void ProcessMessageQueues(void* parameters) {
 
 void setup()
 {
-    communication = std::unique_ptr<Communication>(new Communication());
-    application = std::unique_ptr<Application>(new Application());
-    queueProcessor = std::unique_ptr<QueueProcessor>(new QueueProcessor());
+    communication = unique_ptr<Communication>(new Communication());
+    application = unique_ptr<Application>(new Application());
+    messageConsumer = unique_ptr<MessageConsumer>(new MessageConsumer());
 
     disableCore0WDT();
     disableCore1WDT();

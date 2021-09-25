@@ -28,10 +28,11 @@ unique_ptr<Axis> setupYAxis()
     return unique_ptr<Axis>(new Axis(move(drive), axisSettings, axisPins));
 }
 
-Application::Application() : xAxis(setupXAxis()),
-                             yAxis(setupYAxis()),
-                             displayReporter(shared_ptr<DisplayReporter>(new DisplayReporter())),
-                             serialReporter(shared_ptr<SerialReporter>(new SerialReporter()))
+Application::Application() :
+    xAxis(setupXAxis()),
+    yAxis(setupYAxis()),
+    displayProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(&displayPositionChangedQueue, 30.0f))),
+    serialProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(&serialPositionChangedQueue, 1.0f)))
 {
 }
 
@@ -44,17 +45,17 @@ void Application::Handle(RequestBase request)
 
 void Application::Tick()
 {
-        counter *= 1.00001;
-        if (counter >= 1000)
-        {
-            counter = 1;
-        }
+    counter *= 1.00001;
+    if (counter >= 1000)
+    {
+        counter = 1;
+    }
  
     auto positionChanged = std::shared_ptr<PositionChangedMessage>(new PositionChangedMessage());
 
     positionChanged->payload.xAxis = counter;
     positionChanged->payload.yAxis = counter / 123;
 
-    this->displayReporter->Report(positionChanged);
-    this->serialReporter->Report(positionChanged);
+    this->displayProducer->Produce(positionChanged);
+    this->serialProducer->Produce(positionChanged);
 }

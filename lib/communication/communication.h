@@ -7,8 +7,8 @@
 
 class Communication
 {
-public:
-    Communication();
-    Optional<RequestBase> Receive(Stream& stream);
-    void Transmit(const Response& response, Stream& stream);
+    public:
+        Communication();
+        Optional<RequestBase> Receive(Stream& stream);
+        void Transmit(const Response& response, Stream& stream);
 };
