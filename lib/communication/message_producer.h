@@ -10,18 +10,18 @@ template <typename T>
 class MessageProducer
 {
     private:
-        queue<shared_ptr<T>>* messages;
+        shared_ptr<queue<shared_ptr<T>>> messages;
         const float frequencyInHertz;
         const float cycleDurationInMicros;
         unsigned long microsAtStart;
 
     public:
-        MessageProducer(queue<shared_ptr<T>>* messages, float frequencyInHertz);
+        MessageProducer(shared_ptr<queue<shared_ptr<T>>> messages, float frequencyInHertz);
         void Produce(shared_ptr<T> value, bool force = false);
 };
 
 template <typename T>
-MessageProducer<T>::MessageProducer(queue<shared_ptr<T>>* messages, float frequencyInHertz) :
+MessageProducer<T>::MessageProducer(shared_ptr<queue<shared_ptr<T>>> messages, float frequencyInHertz) :
     messages(messages),
     frequencyInHertz(frequencyInHertz),
     cycleDurationInMicros(1000000.0f / frequencyInHertz),

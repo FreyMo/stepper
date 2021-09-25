@@ -31,8 +31,8 @@ unique_ptr<Axis> setupYAxis()
 Application::Application() :
     xAxis(setupXAxis()),
     yAxis(setupYAxis()),
-    displayProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(&displayPositionChangedQueue, 30.0f))),
-    serialProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(&serialPositionChangedQueue, 1.0f)))
+    displayProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(displayPositionChangedQueue, 30.0f))),
+    serialProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(serialPositionChangedQueue, 1.0f)))
 {
 }
 

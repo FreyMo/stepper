@@ -6,5 +6,5 @@
 
 using namespace std;
 
-extern queue<shared_ptr<PositionChangedMessage>> serialPositionChangedQueue;
-extern queue<shared_ptr<PositionChangedMessage>> displayPositionChangedQueue;
+extern shared_ptr<queue<shared_ptr<PositionChangedMessage>>> serialPositionChangedQueue;
+extern shared_ptr<queue<shared_ptr<PositionChangedMessage>>> displayPositionChangedQueue;

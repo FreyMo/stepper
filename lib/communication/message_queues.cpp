@@ -2,5 +2,5 @@
 
 using namespace std;
 
-queue<shared_ptr<PositionChangedMessage>> serialPositionChangedQueue;
-queue<shared_ptr<PositionChangedMessage>> displayPositionChangedQueue;
+shared_ptr<queue<shared_ptr<PositionChangedMessage>>> serialPositionChangedQueue = shared_ptr<queue<shared_ptr<PositionChangedMessage>>>(new queue<shared_ptr<PositionChangedMessage>>());
+shared_ptr<queue<shared_ptr<PositionChangedMessage>>> displayPositionChangedQueue = shared_ptr<queue<shared_ptr<PositionChangedMessage>>>(new queue<shared_ptr<PositionChangedMessage>>());

@@ -22,18 +22,19 @@ void MessageConsumer::HandleDisplayMessage(std::shared_ptr<PositionChangedMessag
     this->display->Show(message->payload.xAxis);
 }
 
-void MessageConsumer::Consume() {
-    if (!serialPositionChangedQueue.empty())
+void MessageConsumer::Consume()
+{
+    if (!serialPositionChangedQueue->empty())
     {
-        auto serialMessage = serialPositionChangedQueue.front();
-        serialPositionChangedQueue.pop();
+        auto serialMessage = serialPositionChangedQueue->front();
+        serialPositionChangedQueue->pop();
         this->HandleSerialMessage(serialMessage);
     }
 
-    if (!displayPositionChangedQueue.empty())
+    if (!displayPositionChangedQueue->empty())
     {
-        auto displayMessage = displayPositionChangedQueue.front();
-        displayPositionChangedQueue.pop();
+        auto displayMessage = displayPositionChangedQueue->front();
+        displayPositionChangedQueue->pop();
         this->HandleDisplayMessage(displayMessage);
     }
 }

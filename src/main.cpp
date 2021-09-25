@@ -22,7 +22,8 @@ TaskHandle_t communicationTask;
 TaskHandle_t applicationTask;
 TaskHandle_t messageTask;
 
-void RunApplication(void* parameters) {
+void RunApplication(void* parameters)
+{
     auto app = static_cast<Application*>(parameters);
 
     while (true)
@@ -31,7 +32,8 @@ void RunApplication(void* parameters) {
     }
 }
 
-void RunCommunication(void* parameters) {
+void RunCommunication(void* parameters)
+{
     auto comm = static_cast<Communication*>(parameters);
 
     while (true)
@@ -54,7 +56,8 @@ void RunCommunication(void* parameters) {
     }
 }
 
-void ProcessMessageQueues(void* parameters) {
+void ProcessMessageQueues(void* parameters)
+{
     while (true)
     {
         messageConsumer->Consume();
@@ -96,7 +99,7 @@ void setup()
     xTaskCreatePinnedToCore(
         RunApplication,
         "RunApplication",
-        10000,
+        50000,
         application.get(),
         HIGH_PRIORITY,
         &applicationTask,
