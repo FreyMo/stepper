@@ -12,8 +12,7 @@ class Application
         const std::unique_ptr<Axis> yAxis;
         const std::shared_ptr<PositionChangedProducer> displayProducer;
         const std::shared_ptr<PositionChangedProducer> serialProducer;
-
-        static void Report(void *parameter);
+        
     public:
         Application();
         void Handle(RequestBase request);

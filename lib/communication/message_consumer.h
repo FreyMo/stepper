@@ -18,7 +18,7 @@ class MessageConsumer
     public:
         void Consume();
 
-        MessageConsumer() : display(std::unique_ptr<Display>(new Display(0x70)))
+        MessageConsumer() : display(std::unique_ptr<Display>(new Display()))
         {
         }
 };

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <message_producer.h>
-#include <display.h>
 #include <definitions/message.h>
 #include <memory>
 
