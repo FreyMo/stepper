@@ -2,10 +2,7 @@
 #include <communication.h>
 #include <application.h>
 #include <memory>
-#include <message_queues.h>
 #include <message_consumer.h>
-
-#include <ArduinoJson.h>
 
 #define HIGH_PRIORITY 1
 #define LOW_PRIORITY 0
