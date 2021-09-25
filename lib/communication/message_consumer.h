@@ -14,6 +14,7 @@ class MessageConsumer
 
         void HandleSerialMessage(std::shared_ptr<PositionChangedMessage> message);
         void HandleDisplayMessage(std::shared_ptr<PositionChangedMessage> message);
+        void HandleErrorMessage(std::shared_ptr<ErrorOccurredMessage> message);
     
     public:
         void Consume();

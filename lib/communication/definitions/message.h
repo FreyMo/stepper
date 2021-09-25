@@ -22,3 +22,13 @@ struct PositionChangedMessage : public Message<PositionChangedPayload>
 {
     static const String eventString;
 };
+
+struct ErrorOccurredPayload
+{
+    String error;
+};
+
+struct ErrorOccurredMessage : public Message<ErrorOccurredPayload>
+{
+    static const String eventString;
+};

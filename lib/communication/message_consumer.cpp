@@ -17,6 +17,22 @@ void MessageConsumer::HandleSerialMessage(std::shared_ptr<PositionChangedMessage
     Serial.println();
 }
 
+void MessageConsumer::HandleErrorMessage(std::shared_ptr<ErrorOccurredMessage> message)
+{
+    StaticJsonDocument<128> doc;
+    auto json = doc.to<JsonObject>();
+
+    json["type"] = MessageBase::type;
+    json["event"] = ErrorOccurredMessage::eventString;
+
+    auto payload = json.createNestedObject("payload");
+    
+    payload["error"] = message->payload.error;
+
+    serializeJson(json, Serial);
+    Serial.println();
+}
+
 void MessageConsumer::HandleDisplayMessage(std::shared_ptr<PositionChangedMessage> message)
 {
     this->display->Show(message->payload.xAxis);
@@ -36,5 +52,12 @@ void MessageConsumer::Consume()
         auto displayMessage = displayPositionChangedQueue->front();
         displayPositionChangedQueue->pop();
         this->HandleDisplayMessage(displayMessage);
+    }
+
+    if (!errorOccuredQueue->empty())
+    {
+        auto errorMessage = errorOccuredQueue->front();
+        errorOccuredQueue->pop();
+        this->HandleErrorMessage(errorMessage);
     }
 }

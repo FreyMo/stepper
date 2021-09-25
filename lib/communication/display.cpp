@@ -16,5 +16,4 @@ void Display::Show(float position)
     }
 
     this->matrix.writeDisplay();
-    this->matrix.setBrightness(15);
 }

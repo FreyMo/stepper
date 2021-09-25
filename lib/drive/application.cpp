@@ -32,7 +32,8 @@ Application::Application() :
     xAxis(setupXAxis()),
     yAxis(setupYAxis()),
     displayProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(displayPositionChangedQueue, 30.0f))),
-    serialProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(serialPositionChangedQueue, 1.0f)))
+    serialProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(serialPositionChangedQueue, 1.0f))),
+    errorProducer(shared_ptr<ErrorOccuredProducer>(new ErrorOccuredProducer(errorOccuredQueue, 1.0f)))
 {
 }
 
@@ -58,4 +59,11 @@ void Application::Tick()
 
     this->displayProducer->Produce(positionChanged);
     this->serialProducer->Produce(positionChanged);
+}
+
+void Application::Error(String errorMessage)
+{
+    auto error = std::shared_ptr<ErrorOccurredMessage>(new ErrorOccurredMessage());
+    error->payload.error = errorMessage;
+    this->errorProducer->Produce(error);
 }

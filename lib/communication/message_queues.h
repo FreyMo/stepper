@@ -8,3 +8,4 @@ using namespace std;
 
 extern shared_ptr<queue<shared_ptr<PositionChangedMessage>>> serialPositionChangedQueue;
 extern shared_ptr<queue<shared_ptr<PositionChangedMessage>>> displayPositionChangedQueue;
+extern shared_ptr<queue<shared_ptr<ErrorOccurredMessage>>> errorOccuredQueue;
