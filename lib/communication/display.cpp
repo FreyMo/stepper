@@ -15,5 +15,5 @@ void Display::Show(float position)
         this->matrix.printFloat(position, 1);
     }
 
-    this->matrix.writeDisplay();
+    this->matrix.writeDisplay(); 
 }

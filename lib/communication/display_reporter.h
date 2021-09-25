@@ -5,7 +5,7 @@
 #include <definitions/message.h>
 #include <memory>
 
-class DisplayReporter : public Reporter<const PositionChangedMessage&>
+class DisplayReporter : public Reporter<PositionChangedMessage>
 {
 private:
     const std::unique_ptr<Display> xAxisDisplay;
@@ -15,5 +15,5 @@ public:
     DisplayReporter(float frequencyInHertz = 30.0f);
 
 protected:
-    virtual void ReportInternal(const PositionChangedMessage& value) override;
+    virtual void ReportInternal(std::shared_ptr<PositionChangedMessage> value) override;
 };

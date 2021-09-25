@@ -1,27 +1,10 @@
 #include <application.h>
 #include <memory>
+#include <message_queues.h>
 
 using namespace std;
 
-int counter = 0;
-
-struct WrappedMessage
-{
-    const unique_ptr<PositionChangedMessage> message;
-    const shared_ptr<SerialReporter> serialReporter;
-    const shared_ptr<DisplayReporter> displayReporter;
-
-    WrappedMessage(
-        unique_ptr<PositionChangedMessage> message,
-        shared_ptr<SerialReporter> serialReporter,
-        shared_ptr<DisplayReporter> displayReporter
-    ) : 
-        message(move(message)),
-        serialReporter(serialReporter),
-        displayReporter(displayReporter)
-    {   
-    }
-};
+float counter = 1;
 
 unique_ptr<Axis> setupXAxis()
 {
@@ -59,60 +42,19 @@ void Application::Handle(RequestBase request)
     // set values, start processes
 }
 
-TaskHandle_t commyTask;
-
 void Application::Tick()
 {
-    counter++;
-    if (counter > 1001)
-    {
-        counter = -100;
-    }
+        counter *= 1.00001;
+        if (counter >= 1000)
+        {
+            counter = 1;
+        }
+ 
+    auto positionChanged = std::shared_ptr<PositionChangedMessage>(new PositionChangedMessage());
 
-    delayMicroseconds(100);
-
-    auto positionChanged = PositionChangedMessage();
-
-    positionChanged.payload.xAxis = counter;
-    positionChanged.payload.yAxis = counter / 123;
+    positionChanged->payload.xAxis = counter;
+    positionChanged->payload.yAxis = counter / 123;
 
     this->displayReporter->Report(positionChanged);
     this->serialReporter->Report(positionChanged);
-
-    // auto positionChanged2 = new PositionChangedMessage();
-
-    // positionChanged2->payload.xAxis = counter;
-    // positionChanged2->payload.yAxis = counter / 123;
-
-    // if (commyTask == NULL)
-    // {
-    //     xTaskCreatePinnedToCore(
-    //             Application::Report,
-    //             "asd",
-    //             256,
-    //             positionChanged2,
-    //             1,
-    //             &commyTask,
-    //             1);
-    // }
-    // else
-    // {
-    //     delete positionChanged2;
-    // }
-    
-    // based on current variables, run AxisTick, run Drive Tick
-    // Retrieve position
-    // Schedule report function
-}
-
-void Application::Report(void* parameter)
-{
-    auto message = static_cast<WrappedMessage*>(parameter);
-    
-    message->displayReporter->Report(*(message->message));
-    message->serialReporter->Report(*(message->message));
-
-    delete message;
-
-    vTaskDelete(NULL);
 }

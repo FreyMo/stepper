@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <memory>
 
 template <typename T>
 class Reporter
@@ -11,11 +12,11 @@ private:
     unsigned long microsAtStart;
 
 protected:
-    virtual void ReportInternal(T value) = 0;
+    virtual void ReportInternal(std::shared_ptr<T> value) = 0;
 
 public:
     Reporter(float frequencyInHertz = 30.0F);
-    void Report(T value, bool force = false);
+    void Report(std::shared_ptr<T> value, bool force = false);
 };
 
 template <typename T>
@@ -27,7 +28,7 @@ Reporter<T>::Reporter(float frequencyInHertz) :
 }
 
 template <typename T>
-void Reporter<T>::Report(T value, bool force)
+void Reporter<T>::Report(std::shared_ptr<T> value, bool force)
 {
   if (force)
   {

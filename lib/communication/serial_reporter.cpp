@@ -1,25 +1,17 @@
 #include <serial_reporter.h>
 #include <definitions/message.h>
 #include <ArduinoJson.h>
+#include <message_queues.h>
 
 SerialReporter::SerialReporter(float frequencyInHertz) :
-    Reporter<const PositionChangedMessage&>(frequencyInHertz)
+    Reporter<PositionChangedMessage>(frequencyInHertz)
 {
 }
 
-void SerialReporter::ReportInternal(const PositionChangedMessage& value)
+void SerialReporter::ReportInternal(std::shared_ptr<PositionChangedMessage> value)
 {
-    StaticJsonDocument<128> doc;
-    auto json = doc.to<JsonObject>();
-
-    json["type"] = MessageBase::type;
-    json["event"] = PositionChangedMessage::eventString;
-
-    auto payload = json.createNestedObject("payload");
-    
-    payload["xAxis"] = value.payload.xAxis;
-    payload["yAxis"] = value.payload.yAxis;
-
-    serializeJson(json, Serial);
-    Serial.println();
+    if (serialPositionChangedQueue.size() < 3)
+    {
+        serialPositionChangedQueue.push(value);
+    }
 }

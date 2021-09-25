@@ -1,15 +1,18 @@
 #include <display_reporter.h>
 #include <display.h>
+#include <message_queues.h>
 
 DisplayReporter::DisplayReporter(float frequencyInHertz) :
-    Reporter<const PositionChangedMessage&>(frequencyInHertz),
-    xAxisDisplay(std::unique_ptr<Display>(new Display(0x70))),
+    Reporter<PositionChangedMessage>(frequencyInHertz),
+    xAxisDisplay(std::unique_ptr<Display>(new Display(0x77))), // MUST BE 0x70
     yAxisDisplay(std::unique_ptr<Display>(new Display(0x71)))
 {
 }
 
-void DisplayReporter::ReportInternal(const PositionChangedMessage& value)
+void DisplayReporter::ReportInternal(std::shared_ptr<PositionChangedMessage> value)
 {
-    this->xAxisDisplay->Show(value.payload.xAxis);
-    this->yAxisDisplay->Show(value.payload.yAxis);
+    if (displayPositionChangedQueue.size() < 10)
+    {
+        displayPositionChangedQueue.push(value);
+    }
 }

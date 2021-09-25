@@ -3,10 +3,10 @@
 #include <reporter.h>
 #include <definitions/message.h>
 
-class SerialReporter : public Reporter<const PositionChangedMessage&>
+class SerialReporter : public Reporter<PositionChangedMessage>
 {
 public:
     SerialReporter(float frequencyInHertz = 1.0f);
 protected:
-    virtual void ReportInternal(const PositionChangedMessage& value) override;
+    virtual void ReportInternal(std::shared_ptr<PositionChangedMessage> value) override;
 };

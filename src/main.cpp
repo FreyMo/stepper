@@ -2,17 +2,23 @@
 #include <communication.h>
 #include <application.h>
 #include <memory>
+#include <message_queues.h>
+#include <queue_processor.h>
+
+#include <ArduinoJson.h>
 
 #define HIGH_PRIORITY 1
 #define LOW_PRIORITY 0
-#define APPLICATION_CORE 0
-#define COMMUNICATION_CORE 1
+#define APPLICATION_CORE 1
+#define COMMUNICATION_CORE 0
 
 std::unique_ptr<Communication> communication;
 std::unique_ptr<Application> application;
+std::unique_ptr<QueueProcessor> queueProcessor;
 
 TaskHandle_t communicationTask;
 TaskHandle_t applicationTask;
+TaskHandle_t messageTask;
 
 void RunApplication(void* parameters) {
     auto app = static_cast<Application*>(parameters);
@@ -20,8 +26,6 @@ void RunApplication(void* parameters) {
     while (true)
     {
         app->Tick();
-
-        vTaskDelay(1);
     }
 }
 
@@ -48,15 +52,44 @@ void RunCommunication(void* parameters) {
     }
 }
 
+void ProcessMessageQueues(void* parameters) {
+    while (true)
+    {
+        queueProcessor->ProcessMessageQueues();
+
+        vTaskDelay(1);
+    }
+}
+
 void setup()
 {
     communication = std::unique_ptr<Communication>(new Communication());
     application = std::unique_ptr<Application>(new Application());
+    queueProcessor = std::unique_ptr<QueueProcessor>(new QueueProcessor());
 
     disableCore0WDT();
     disableCore1WDT();
 
-    vTaskPrioritySet(NULL, LOW_PRIORITY);
+    // Do not change the order of these tasks!
+    xTaskCreatePinnedToCore(
+        RunCommunication,
+        "RunCommunication",
+        50000,
+        communication.get(),
+        LOW_PRIORITY,
+        &communicationTask,
+        COMMUNICATION_CORE
+    );
+
+    xTaskCreatePinnedToCore(
+        ProcessMessageQueues,
+        "ProcessMessageQueues",
+        50000,
+        NULL,
+        LOW_PRIORITY,
+        &messageTask,
+        COMMUNICATION_CORE
+    );
 
     xTaskCreatePinnedToCore(
         RunApplication,
@@ -66,19 +99,9 @@ void setup()
         HIGH_PRIORITY,
         &applicationTask,
         APPLICATION_CORE);
-
-    xTaskCreatePinnedToCore(
-        RunCommunication,
-        "RunCommunication",
-        50000,
-        communication.get(),
-        HIGH_PRIORITY,
-        &communicationTask,
-        COMMUNICATION_CORE
-    );
 }
 
 void loop()
 {
-    vTaskDelay(1);
+    vTaskDelete(NULL);
 }
