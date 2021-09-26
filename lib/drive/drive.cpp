@@ -5,43 +5,32 @@
 DrivePins::DrivePins(uint8_t enablePin, uint8_t directionPin, uint8_t stepPin) :
     enable(enablePin), direction(directionPin), step(stepPin) {}
 
-DriveSettings::DriveSettings(
-    int stepsPerRevolution,
-    int maxAcceleration,
-    int maxVelocity) :
-    stepsPerRevolution(stepsPerRevolution),
-    maxAcceleration(maxAcceleration),
-    maxVelocity(maxVelocity)
-{
-}
+// std::vector<uint32_t> DriveMath::GetStepDurations(const DriveSettings& settings, int steps)
+// {
+//     // constant velocity for now
+//     auto durationInMicroseconds = static_cast<uint32_t>(1000000.0f / static_cast<float>(settings.maxVelocity) / 2.0f);
 
-std::vector<uint32_t> DriveMath::GetStepDurations(const DriveSettings& settings, int steps)
-{
-    // constant velocity for now
-    auto durationInMicroseconds = static_cast<uint32_t>(1000000.0f / static_cast<float>(settings.maxVelocity) / 2.0f);
-
-    return std::vector<uint32_t>(steps, durationInMicroseconds);
+//     return std::vector<uint32_t>(steps, durationInMicroseconds);
     
-    // auto accelerationSteps = static_cast<int>(std::powf(settings.velocity, 2.0f) / static_cast<float>(settings.acceleration) / 2.0f);
-    // auto decelerationSteps = accelerationSteps;
-    // auto stepsAtMaxVelocity = 0;
+//     // auto accelerationSteps = static_cast<int>(std::powf(settings.velocity, 2.0f) / static_cast<float>(settings.acceleration) / 2.0f);
+//     // auto decelerationSteps = accelerationSteps;
+//     // auto stepsAtMaxVelocity = 0;
 
-    // if (2 * accelerationSteps < steps)
-    // {
-    //     decelerationSteps = accelerationSteps;
-    //     stepsAtMaxVelocity = steps - accelerationSteps - decelerationSteps;
-    // }
-    // else
-    // {
-    //     accelerationSteps = steps / 2;
-    //     decelerationSteps = steps / 2;
-    // }
+//     // if (2 * accelerationSteps < steps)
+//     // {
+//     //     decelerationSteps = accelerationSteps;
+//     //     stepsAtMaxVelocity = steps - accelerationSteps - decelerationSteps;
+//     // }
+//     // else
+//     // {
+//     //     accelerationSteps = steps / 2;
+//     //     decelerationSteps = steps / 2;
+//     // }
 
-    // return std::unique_ptr<std::vector<int>>();
-}
+//     // return std::unique_ptr<std::vector<int>>();
+// }
 
-Drive::Drive(const DriveSettings settings, const DrivePins pins) :
-    settings(settings), pins(pins)
+Drive::Drive(const DrivePins pins) : pins(pins)
 {
     pinMode(this->pins.enable, OUTPUT);
     pinMode(this->pins.direction, OUTPUT);
@@ -64,38 +53,40 @@ void Drive::SetStep(uint8_t value)
 
 int Drive::RotateBySteps(int steps, Direction direction)
 {
-    auto stepDuration = DriveMath::GetStepDurations(this->settings, steps);
-    auto performedSteps = 0;
+    // auto stepDuration = DriveMath::GetStepDurations(this->settings, steps);
+    // auto performedSteps = 0;
 
-    this->SetDirection(direction);
+    // this->SetDirection(direction);
 
-    for (auto it = stepDuration.begin(); it != stepDuration.end(); ++it)
-    {
-        if (!this->isAllowedToRun)
-        {
-            return performedSteps;
-        }
+    // for (auto it = stepDuration.begin(); it != stepDuration.end(); ++it)
+    // {
+    //     if (!this->isAllowedToRun)
+    //     {
+    //         return performedSteps;
+    //     }
 
-        digitalWrite(this->pins.enable, LOW);
+    //     digitalWrite(this->pins.enable, LOW);
     
-        this->SetStep(HIGH);
-        delayMicroseconds(*it);
+    //     this->SetStep(HIGH);
+    //     delayMicroseconds(*it);
         
-        this->SetStep(LOW);
-        delayMicroseconds(*it);
+    //     this->SetStep(LOW);
+    //     delayMicroseconds(*it);
 
-        performedSteps++;
-    }
+    //     performedSteps++;
+    // }
 
-    return performedSteps;
+    // return performedSteps;
 }
 
 float Drive::RotateByRevolutions(float revolutions, Direction direction)
 {
-    auto performedSteps = this->RotateBySteps(this->settings.stepsPerRevolution * revolutions, direction);
-    auto performedRevolutions = (static_cast<float>(performedSteps) / static_cast<float>(this->settings.stepsPerRevolution));
+    // auto performedSteps = this->RotateBySteps(this->settings.stepsPerRevolution * revolutions, direction);
+    // auto performedRevolutions = (static_cast<float>(performedSteps) / static_cast<float>(this->settings.stepsPerRevolution));
 
-    return performedRevolutions;
+    // return performedRevolutions;
+
+    return 0.5;
 }
 
 void Drive::Allow()

@@ -19,8 +19,16 @@ shared_ptr<ReferenceRequest> ParseReferenceRequest(const RequestJsonDocument& js
     request->id     = json["id"].as<String>();
     request->action = json["action"].as<String>();
 
-    request->payload.referenceSpeed = json["payload"]["referenceSpeed"].as<float>();
-    request->payload.direction      = json["payload"]["direction"].as<String>();
+    request->payload.axis         = json["payload"]["axis"].as<String>();
+    request->payload.direction    = json["payload"]["direction"].as<String>();
+    request->payload.velocity     = json["payload"]["velocity"].as<float>();
+    request->payload.acceleration = json["payload"]["acceleration"].as<float>();
+
+    request->payload.spindlePitch       = json["payload"]["spindlePitch"].as<float>();
+    request->payload.stepsPerRevolution = json["payload"]["stepsPerRevolution"].as<uint16_t>();
+    request->payload.upperLimit         = json["payload"]["upperLimit"].as<float>();
+    request->payload.lowerLimit         = json["payload"]["lowerLimit"].as<float>();
+    request->payload.referenceAt        = json["payload"]["referenceAt"].as<float>();
 
     return request;
 }

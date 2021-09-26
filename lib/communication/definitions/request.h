@@ -14,8 +14,15 @@ struct Request : RequestBase
 
 struct ReferencePayload
 {
-    float referenceSpeed;
+    String axis;
     String direction;
+    float velocity;
+    float acceleration;
+    float spindlePitch;
+    uint16_t stepsPerRevolution;
+    float upperLimit;
+    float lowerLimit;
+    float referenceAt;
 };
 
 struct ReferenceRequest : public Request<ReferencePayload>

@@ -2,30 +2,34 @@
 #include <memory>
 #include <message_queues.h>
 
+#define X_ENABLE_PIN       GPIO_NUM_16
+#define X_DIRECTION_PIN    GPIO_NUM_4
+#define X_STEP_PIN         GPIO_NUM_17
+#define X_LIMIT_SWITCH_PIN GPIO_NUM_13
+
+#define Y_ENABLE_PIN       GPIO_NUM_32
+#define Y_DIRECTION_PIN    GPIO_NUM_33
+#define Y_STEP_PIN         GPIO_NUM_34
+#define Y_LIMIT_SWITCH_PIN GPIO_NUM_35
+
 using namespace std;
 
 float counter = 1;
 
 unique_ptr<Axis> setupXAxis()
 {
-    auto drivePins = DrivePins(GPIO_NUM_16, GPIO_NUM_4, GPIO_NUM_17);
-    auto driveSettings = DriveSettings(800, 50, 3200);
-    auto drive = unique_ptr<Drive>(new Drive(driveSettings, drivePins));
+    auto drivePins = DrivePins(X_ENABLE_PIN, X_DIRECTION_PIN, X_STEP_PIN);
+    auto drive = unique_ptr<Drive>(new Drive(drivePins));
 
-    auto axisPins = AxisPins(GPIO_NUM_13);
-    auto axisSettings = AxisSettings(0.1f);
-    return unique_ptr<Axis>(new Axis(move(drive), axisSettings, axisPins));
+    return unique_ptr<Axis>(new Axis(move(drive), AxisPins(X_LIMIT_SWITCH_PIN)));
 }
 
 unique_ptr<Axis> setupYAxis()
 {
-    auto drivePins = DrivePins(GPIO_NUM_21, GPIO_NUM_22, GPIO_NUM_23);
-    auto driveSettings = DriveSettings(800, 50, 3200);
-    auto drive = unique_ptr<Drive>(new Drive(driveSettings, drivePins));
+    auto drivePins = DrivePins(Y_ENABLE_PIN, Y_DIRECTION_PIN, Y_STEP_PIN);
+    auto drive = unique_ptr<Drive>(new Drive(drivePins));
 
-    auto axisPins = AxisPins(GPIO_NUM_25);
-    auto axisSettings = AxisSettings(0.1f);
-    return unique_ptr<Axis>(new Axis(move(drive), axisSettings, axisPins));
+    return unique_ptr<Axis>(new Axis(move(drive), AxisPins(Y_LIMIT_SWITCH_PIN)));
 }
 
 unique_ptr<Response> Application::HandleReferenceRequest(shared_ptr<RequestBase> requestBase)
