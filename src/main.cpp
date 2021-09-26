@@ -4,8 +4,8 @@
 #include <memory>
 #include <message_consumer.h>
 
-#define HIGH_PRIORITY 1
-#define LOW_PRIORITY 0
+#define HIGH_PRIORITY 3
+#define LOW_PRIORITY 2
 #define APPLICATION_CORE 1
 #define COMMUNICATION_CORE 0
 
@@ -25,7 +25,14 @@ void RunApplication(void* parameters)
 
     while (true)
     {
+        auto started = micros();
         app->Tick();
+        auto stopped = micros();
+
+        if (stopped - started > 100)
+        {
+            Serial.println("TOO SLOW!");
+        }
     }
 }
 
@@ -40,12 +47,12 @@ void RunCommunication(void* parameters)
             auto request = comm->Receive(Serial);
             if (request.hasValue)
             {
-                comm->Transmit(Response(request.value.id, "ok"), Serial);
-                application->Handle(request.value);
+                auto response = application->Handle(request.value);
+                comm->Transmit(*response.get(), Serial);
             }
             else
             {
-                comm->Transmit(Response("", "error"), Serial);
+                comm->Transmit(Response("", ResponseStatus::error), Serial);
             }
         }
 

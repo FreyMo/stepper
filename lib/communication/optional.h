@@ -1,15 +1,17 @@
 #pragma once
 
+#include <memory>
+
 template <typename T>
 struct Optional
 {
-    const T value;
+    const std::shared_ptr<T> value;
     const bool hasValue;
 
-    static Optional<T> Some(T value) { return Optional(value); }
+    static Optional<T> Some(std::shared_ptr<T> value) { return Optional(value); }
     static Optional<T> None() { return Optional(); };
     
 private:
-    Optional(T value) : value(value), hasValue(true) {}
+    Optional(std::shared_ptr<T> value) : value(value), hasValue(true) {}
     Optional() : hasValue(false) {}
 };

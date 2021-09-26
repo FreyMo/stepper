@@ -39,11 +39,11 @@ void MessageProducer<T>::Produce(std::shared_ptr<T> value, bool force)
         return;
     }
 
-    auto elapsedTicks = (micros() - this->microsAtStart) / this->cycleDurationInMicros;
+    auto elapsedTicks = static_cast<unsigned long>((micros() - this->microsAtStart) / this->cycleDurationInMicros);
 
     if (elapsedTicks >= 1)
     {
-        this->microsAtStart += elapsedTicks * this->cycleDurationInMicros;
+        this->microsAtStart += (elapsedTicks * this->cycleDurationInMicros);
 
         if (this->messages->size() < 3)
         {

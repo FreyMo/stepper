@@ -1,10 +1,10 @@
 #pragma once
 #include <Arduino.h>
 
-enum class ResponseStatus
+struct ResponseStatus
 {
-    ok,
-    error
+    static const String ok;
+    static const String error;
 };
 
 struct Response {

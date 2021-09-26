@@ -1,6 +1,8 @@
 #include <ArduinoJson.h>
 #include <communication.h>
 
+using namespace std;
+
 typedef StaticJsonDocument<512> RequestJsonDocument;
 typedef StaticJsonDocument<128> ResponseJsonDocument;
 
@@ -10,33 +12,33 @@ Communication::Communication()
     Serial.begin(115200);
 }
 
-ReferenceRequest ParseReferenceRequest(const RequestJsonDocument& json)
+shared_ptr<ReferenceRequest> ParseReferenceRequest(const RequestJsonDocument& json)
 {
-    auto request = ReferenceRequest();
+    auto request = shared_ptr<ReferenceRequest>(new ReferenceRequest());
 
-    request.id     = json["id"].as<String>();
-    request.action = json["action"].as<String>();
+    request->id     = json["id"].as<String>();
+    request->action = json["action"].as<String>();
 
-    request.payload.referenceSpeed = json["payload"]["referenceSpeed"].as<float>();
-    request.payload.direction      = json["payload"]["direction"].as<String>();
+    request->payload.referenceSpeed = json["payload"]["referenceSpeed"].as<float>();
+    request->payload.direction      = json["payload"]["direction"].as<String>();
 
     return request;
 }
 
-DriveToRequest ParseDriveToRequest(const RequestJsonDocument& json)
+shared_ptr<DriveToRequest> ParseDriveToRequest(const RequestJsonDocument& json)
 {
-    auto request = DriveToRequest();
+    auto request = shared_ptr<DriveToRequest>(new DriveToRequest());
     
-    request.id     = json["id"].as<String>();
-    request.action = json["action"].as<String>();
+    request->id     = json["id"].as<String>();
+    request->action = json["action"].as<String>();
 
-    request.payload.axisX.position     = json["payload"]["axisX"]["position"].as<float>();
-    request.payload.axisX.velocity     = json["payload"]["axisX"]["velocity"].as<float>();
-    request.payload.axisX.acceleration = json["payload"]["axisX"]["acceleration"].as<float>();
+    request->payload.axisX.position     = json["payload"]["axisX"]["position"].as<float>();
+    request->payload.axisX.velocity     = json["payload"]["axisX"]["velocity"].as<float>();
+    request->payload.axisX.acceleration = json["payload"]["axisX"]["acceleration"].as<float>();
 
-    request.payload.axisY.position     = json["payload"]["axisY"]["position"].as<float>();
-    request.payload.axisY.velocity     = json["payload"]["axisY"]["velocity"].as<float>();
-    request.payload.axisY.acceleration = json["payload"]["axisY"]["acceleration"].as<float>();
+    request->payload.axisY.position     = json["payload"]["axisY"]["position"].as<float>();
+    request->payload.axisY.velocity     = json["payload"]["axisY"]["velocity"].as<float>();
+    request->payload.axisY.acceleration = json["payload"]["axisY"]["acceleration"].as<float>();
 
     return request;
 }

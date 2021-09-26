@@ -28,42 +28,74 @@ unique_ptr<Axis> setupYAxis()
     return unique_ptr<Axis>(new Axis(move(drive), axisSettings, axisPins));
 }
 
+unique_ptr<Response> Application::HandleReferenceRequest(shared_ptr<RequestBase> requestBase)
+{
+    auto request = static_cast<ReferenceRequest*>(requestBase.get());
+
+    // TODO: IMPLEMENT
+
+    return unique_ptr<Response>(new Response(request->id, ResponseStatus::ok));    
+}
+
+unique_ptr<Response> Application::HandleDriveToRequest(shared_ptr<RequestBase> requestBase)
+{
+    auto request = static_cast<DriveToRequest*>(requestBase.get());
+
+    // TODO: IMPLEMENT
+
+    return unique_ptr<Response>(new Response(request->id, ResponseStatus::ok));
+}
+
 Application::Application() :
     xAxis(setupXAxis()),
     yAxis(setupYAxis()),
-    displayProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(displayPositionChangedQueue, 30.0f))),
+    displayProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(displayPositionChangedQueue, 60.0f))),
     serialProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(serialPositionChangedQueue, 1.0f))),
     errorProducer(shared_ptr<ErrorOccuredProducer>(new ErrorOccuredProducer(errorOccuredQueue, 1.0f)))
 {
+    this->actions =
+    {
+        { ReferenceRequest::actionString, [this](shared_ptr<RequestBase> request) { return this->HandleReferenceRequest(request); } },
+        { DriveToRequest::actionString, [this](shared_ptr<RequestBase> request) { return this->HandleDriveToRequest(request); } },
+    };
 }
-
-void Application::Handle(RequestBase request)
+ 
+unique_ptr<Response> Application::Handle(shared_ptr<RequestBase> request)
 {
-    // reinterpret cast
-    // check if something can be done
-    // set values, start processes
+    auto action = actions.find(request->action);
+    if (action != actions.end())
+    {
+        return action->second(request);
+    }
+
+    return unique_ptr<Response>(new Response(request->id, ResponseStatus::error));
 }
 
 void Application::Tick()
 {
-    counter *= 1.00001;
+    counter *= 1.00002;
     if (counter >= 1000)
     {
         counter = 1;
     }
- 
-    auto positionChanged = std::shared_ptr<PositionChangedMessage>(new PositionChangedMessage());
 
-    positionChanged->payload.xAxis = counter;
-    positionChanged->payload.yAxis = counter / 123;
-
-    this->displayProducer->Produce(positionChanged);
-    this->serialProducer->Produce(positionChanged);
+    SendPositionChangedMessage(counter, counter / 123);
 }
 
-void Application::Error(String errorMessage)
+void Application::SendErrorOccuredMessage(String errorMessage)
 {
     auto error = std::shared_ptr<ErrorOccurredMessage>(new ErrorOccurredMessage());
     error->payload.error = errorMessage;
-    this->errorProducer->Produce(error);
+    this->errorProducer->Produce(error, true);
+}
+
+void Application::SendPositionChangedMessage(float xAxisPosition, float yAxisPosition)
+{
+    auto positionChanged = std::shared_ptr<PositionChangedMessage>(new PositionChangedMessage());
+
+    positionChanged->payload.xAxis = xAxisPosition;
+    positionChanged->payload.yAxis = yAxisPosition;
+
+    this->displayProducer->Produce(positionChanged);
+    this->serialProducer->Produce(positionChanged);
 }
