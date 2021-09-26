@@ -9,39 +9,32 @@ Axis::Axis(
     drive(std::move(drive)),
     pins(pins)
 {
-    this->drive->Allow();
+    drive->Allow();
+}
+
+float counter = 1;
+
+float Axis::Tick()
+{
+    counter *= 1.00002;
+    if (counter >= 1000)
+    {
+        counter = 1;
+    }
+
+    return counter;
 }
 
 void Axis::Reference()
 {
-    if (!this->isRunning)
+    if (!isRunning)
     {
-        this->isRunning = true;
+        isRunning = true;
 
         // reference...
 
-        this->isRunning = false;
+        isRunning = false;
     }
-}
-
-void Axis::ReferenceAsync()
-{
-    xTaskCreatePinnedToCore(
-        Axis::ReferenceStatic,
-        "Reference",
-        5000,
-        this,
-        1,
-        NULL,
-        0 // SHOULD BE SET AT START
-    );
-}
-
-void Axis::ReferenceStatic(void* parameter)
-{
-    auto axis = static_cast<Axis*>(parameter);
-    axis->Reference();
-    vTaskDelete(NULL);
 }
 
 float Axis::DriveTo(float position)
@@ -53,12 +46,12 @@ float Axis::DriveTo(float position)
 float Axis::DriveFor(float distance)
 {
     // NOT IMPLEMENTED
-    this->drive->RotateByRevolutions(4.0, Direction::positive);
+    drive->RotateByRevolutions(4.0, Direction::positive);
     delay(500);
-    return this->drive->RotateByRevolutions(4.0, Direction::negative);
+    return drive->RotateByRevolutions(4.0, Direction::negative);
 }
 
 void Axis::Stop()
 {
-    this->drive->Disallow();
+    drive->Disallow();
 }

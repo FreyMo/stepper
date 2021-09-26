@@ -32,23 +32,23 @@ DrivePins::DrivePins(uint8_t enablePin, uint8_t directionPin, uint8_t stepPin) :
 
 Drive::Drive(const DrivePins pins) : pins(pins)
 {
-    pinMode(this->pins.enable, OUTPUT);
-    pinMode(this->pins.direction, OUTPUT);
-    pinMode(this->pins.step, OUTPUT);
+    pinMode(pins.enable, OUTPUT);
+    pinMode(pins.direction, OUTPUT);
+    pinMode(pins.step, OUTPUT);
 
-    this->Disallow();
-    this->SetDirection(Direction::positive);
-    this->SetStep(LOW);
+    Disallow();
+    SetDirection(Direction::positive);
+    SetStep(LOW);
 }
 
 void Drive::SetDirection(Direction direction)
 {
-    digitalWrite(this->pins.direction, static_cast<uint8_t>(direction));
+    digitalWrite(pins.direction, static_cast<uint8_t>(direction));
 }
 
 void Drive::SetStep(uint8_t value)
 {
-    digitalWrite(this->pins.step, value);
+    digitalWrite(pins.step, value);
 }
 
 int Drive::RotateBySteps(int steps, Direction direction)
@@ -77,6 +77,7 @@ int Drive::RotateBySteps(int steps, Direction direction)
     // }
 
     // return performedSteps;
+    return 1;
 }
 
 float Drive::RotateByRevolutions(float revolutions, Direction direction)
@@ -91,11 +92,11 @@ float Drive::RotateByRevolutions(float revolutions, Direction direction)
 
 void Drive::Allow()
 {
-    this->isAllowedToRun = true;
+    isAllowedToRun = true;
 }
 
 void Drive::Disallow()
 {
-    digitalWrite(this->pins.enable, HIGH);
-    this->isAllowedToRun = false;
+    digitalWrite(pins.enable, HIGH);
+    isAllowedToRun = false;
 }

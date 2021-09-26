@@ -34,20 +34,20 @@ void MessageProducer<T>::Produce(std::shared_ptr<T> value, bool force)
 {
     if (force)
     {
-        this->messages->push(value);
+        messages->push(value);
 
         return;
     }
 
-    auto elapsedTicks = static_cast<unsigned long>((micros() - this->microsAtStart) / this->cycleDurationInMicros);
+    auto elapsedTicks = static_cast<unsigned long>((micros() - microsAtStart) / cycleDurationInMicros);
 
     if (elapsedTicks >= 1)
     {
-        this->microsAtStart += (elapsedTicks * this->cycleDurationInMicros);
+        microsAtStart += (elapsedTicks * cycleDurationInMicros);
 
-        if (this->messages->size() < 3)
+        if (messages->size() < 3)
         {
-            this->messages->push(value);
+            messages->push(value);
         }
     }
 }

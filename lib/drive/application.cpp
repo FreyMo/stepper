@@ -14,8 +14,6 @@
 
 using namespace std;
 
-float counter = 1;
-
 unique_ptr<Axis> setupXAxis()
 {
     auto drivePins = DrivePins(X_ENABLE_PIN, X_DIRECTION_PIN, X_STEP_PIN);
@@ -36,8 +34,20 @@ unique_ptr<Response> Application::HandleReferenceRequest(shared_ptr<RequestBase>
 {
     auto request = static_cast<ReferenceRequest*>(requestBase.get());
 
-    // TODO: IMPLEMENT
-
+    if (request->payload.axis.equalsIgnoreCase("x"))
+    {
+        
+        // x axis
+    }
+    else if (request->payload.axis.equalsIgnoreCase("y"))
+    {
+        // y axis
+    }
+    else
+    {
+        return unique_ptr<Response>(new Response(request->id, ResponseStatus::error));    
+    }
+    
     return unique_ptr<Response>(new Response(request->id, ResponseStatus::ok));    
 }
 
@@ -57,7 +67,7 @@ Application::Application() :
     serialProducer(shared_ptr<PositionChangedProducer>(new PositionChangedProducer(serialPositionChangedQueue, 1.0f))),
     errorProducer(shared_ptr<ErrorOccuredProducer>(new ErrorOccuredProducer(errorOccuredQueue, 1.0f)))
 {
-    this->actions =
+    actions =
     {
         { ReferenceRequest::actionString, [this](shared_ptr<RequestBase> request) { return this->HandleReferenceRequest(request); } },
         { DriveToRequest::actionString, [this](shared_ptr<RequestBase> request) { return this->HandleDriveToRequest(request); } },
@@ -77,20 +87,17 @@ unique_ptr<Response> Application::Handle(shared_ptr<RequestBase> request)
 
 void Application::Tick()
 {
-    counter *= 1.00002;
-    if (counter >= 1000)
-    {
-        counter = 1;
-    }
+    auto xAxisPosition = xAxis->Tick();
+    auto yAxisPosition = yAxis->Tick();
 
-    SendPositionChangedMessage(counter, counter / 123);
+    SendPositionChangedMessage(xAxisPosition, yAxisPosition);
 }
 
 void Application::SendErrorOccuredMessage(String errorMessage)
 {
     auto error = std::shared_ptr<ErrorOccurredMessage>(new ErrorOccurredMessage());
     error->payload.error = errorMessage;
-    this->errorProducer->Produce(error, true);
+    errorProducer->Produce(error, true);
 }
 
 void Application::SendPositionChangedMessage(float xAxisPosition, float yAxisPosition)
@@ -100,6 +107,6 @@ void Application::SendPositionChangedMessage(float xAxisPosition, float yAxisPos
     positionChanged->payload.xAxis = xAxisPosition;
     positionChanged->payload.yAxis = yAxisPosition;
 
-    this->displayProducer->Produce(positionChanged);
-    this->serialProducer->Produce(positionChanged);
+    displayProducer->Produce(positionChanged);
+    serialProducer->Produce(positionChanged);
 }

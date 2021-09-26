@@ -20,9 +20,9 @@ class Axis
     public:
         Axis(std::unique_ptr<Drive> drive, const AxisPins pins);
 
-        void ReferenceAsync();
+        float Tick();
+
         void Reference();
-        static void ReferenceStatic(void* parameter);
 
         float DriveTo(float position);
         float DriveFor(float distance);

@@ -35,7 +35,7 @@ void MessageConsumer::HandleErrorMessage(std::shared_ptr<ErrorOccurredMessage> m
 
 void MessageConsumer::HandleDisplayMessage(std::shared_ptr<PositionChangedMessage> message)
 {
-    this->display->Show(message->payload.xAxis);
+    display->Show(message->payload.xAxis);
 }
 
 void MessageConsumer::Consume()
@@ -44,20 +44,20 @@ void MessageConsumer::Consume()
     {
         auto serialMessage = serialPositionChangedQueue->front();
         serialPositionChangedQueue->pop();
-        this->HandleSerialMessage(serialMessage);
+        HandleSerialMessage(serialMessage);
     }
 
     if (!displayPositionChangedQueue->empty())
     {
         auto displayMessage = displayPositionChangedQueue->front();
         displayPositionChangedQueue->pop();
-        this->HandleDisplayMessage(displayMessage);
+        HandleDisplayMessage(displayMessage);
     }
 
     if (!errorOccuredQueue->empty())
     {
         auto errorMessage = errorOccuredQueue->front();
         errorOccuredQueue->pop();
-        this->HandleErrorMessage(errorMessage);
+        HandleErrorMessage(errorMessage);
     }
 }
