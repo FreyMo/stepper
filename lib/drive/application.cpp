@@ -36,26 +36,40 @@ unique_ptr<Response> Application::HandleReferenceRequest(shared_ptr<RequestBase>
 
     if (request->payload.axis.equalsIgnoreCase("x"))
     {
-        
-        // x axis
+        auto wasAccepted = xAxis->Reference();
+        auto responseStatus = wasAccepted ? ResponseStatus::ok : ResponseStatus::error;
+
+        return unique_ptr<Response>(new Response(request->id, responseStatus));
     }
     else if (request->payload.axis.equalsIgnoreCase("y"))
     {
-        // y axis
+        auto wasAccepted = yAxis->Reference();
+        auto responseStatus = wasAccepted ? ResponseStatus::ok : ResponseStatus::error;
+
+        return unique_ptr<Response>(new Response(request->id, responseStatus));
     }
-    else
-    {
-        return unique_ptr<Response>(new Response(request->id, ResponseStatus::error));    
-    }
-    
-    return unique_ptr<Response>(new Response(request->id, ResponseStatus::ok));    
+
+    return unique_ptr<Response>(new Response(request->id, ResponseStatus::error));    
 }
 
 unique_ptr<Response> Application::HandleDriveToRequest(shared_ptr<RequestBase> requestBase)
 {
     auto request = static_cast<DriveToRequest*>(requestBase.get());
 
-    // TODO: IMPLEMENT
+    if (request->payload.axis.equalsIgnoreCase("x"))
+    {
+        auto wasAccepted = xAxis->DriveTo(request->payload.position);
+        auto responseStatus = wasAccepted ? ResponseStatus::ok : ResponseStatus::error;
+
+        return unique_ptr<Response>(new Response(request->id, responseStatus));
+    }
+    else if (request->payload.axis.equalsIgnoreCase("y"))
+    {
+        auto wasAccepted = yAxis->DriveTo(request->payload.position);
+        auto responseStatus = wasAccepted ? ResponseStatus::ok : ResponseStatus::error;
+
+        return unique_ptr<Response>(new Response(request->id, responseStatus));
+    }
 
     return unique_ptr<Response>(new Response(request->id, ResponseStatus::ok));
 }

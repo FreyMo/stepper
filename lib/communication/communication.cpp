@@ -40,13 +40,10 @@ shared_ptr<DriveToRequest> ParseDriveToRequest(const RequestJsonDocument& json)
     request->id     = json["id"].as<String>();
     request->action = json["action"].as<String>();
 
-    request->payload.axisX.position     = json["payload"]["axisX"]["position"].as<float>();
-    request->payload.axisX.velocity     = json["payload"]["axisX"]["velocity"].as<float>();
-    request->payload.axisX.acceleration = json["payload"]["axisX"]["acceleration"].as<float>();
-
-    request->payload.axisY.position     = json["payload"]["axisY"]["position"].as<float>();
-    request->payload.axisY.velocity     = json["payload"]["axisY"]["velocity"].as<float>();
-    request->payload.axisY.acceleration = json["payload"]["axisY"]["acceleration"].as<float>();
+    request->payload.axis         = json["payload"]["axis"].as<String>();
+    request->payload.position     = json["payload"]["position"].as<float>();
+    request->payload.velocity     = json["payload"]["velocity"].as<float>();
+    request->payload.acceleration = json["payload"]["acceleration"].as<float>();
 
     return request;
 }

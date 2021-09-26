@@ -10,21 +10,28 @@ struct AxisPins
     AxisPins(uint8_t limitSwitchPin);
 };
 
+enum class AxisState
+{
+    Standby,
+    Referencing,
+    Driving
+};
+
 class Axis
 {
     private:
         const std::unique_ptr<Drive> drive;
         const AxisPins pins;
 
-        bool isRunning = false;
+        AxisState state = AxisState::Standby;
+        float position = 0.0f;
+
     public:
         Axis(std::unique_ptr<Drive> drive, const AxisPins pins);
 
         float Tick();
-
-        void Reference();
-
-        float DriveTo(float position);
-        float DriveFor(float distance);
         void Stop();
+
+        bool Reference();
+        bool DriveTo(float position);
 };

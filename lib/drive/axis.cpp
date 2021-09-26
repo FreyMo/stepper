@@ -9,49 +9,48 @@ Axis::Axis(
     drive(std::move(drive)),
     pins(pins)
 {
-    drive->Allow();
+    position = 1;
 }
-
-float counter = 1;
 
 float Axis::Tick()
 {
-    counter *= 1.00002;
-    if (counter >= 1000)
+    position *= 1.00002;
+    if (position >= 1000)
     {
-        counter = 1;
+        position = 1;
     }
 
-    return counter;
+    return position;
 }
 
-void Axis::Reference()
+bool Axis::Reference()
 {
-    if (!isRunning)
+    if (state != AxisState::Standby)
     {
-        isRunning = true;
-
-        // reference...
-
-        isRunning = false;
+        return false;
     }
+
+    state = AxisState::Referencing;
+
+    // Save reference payload
+
+    return true;
 }
 
-float Axis::DriveTo(float position)
+bool Axis::DriveTo(float position)
 {
-    // NOT IMPLEMENTED
-    return 0.0f;
-}
+    if (state != AxisState::Standby)
+    {
+        return false;
+    }
 
-float Axis::DriveFor(float distance)
-{
-    // NOT IMPLEMENTED
-    drive->RotateByRevolutions(4.0, Direction::positive);
-    delay(500);
-    return drive->RotateByRevolutions(4.0, Direction::negative);
+    state = AxisState::Driving;
+
+    // Save drive to payload
+    
+    return true;
 }
 
 void Axis::Stop()
 {
-    drive->Disallow();
 }

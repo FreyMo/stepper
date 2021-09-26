@@ -29,9 +29,9 @@ void RunApplication(void* parameters)
         app->Tick();
         auto stopped = micros();
 
-        if (stopped - started > 100)
+        if (stopped - started > 70)
         {
-            Serial.println("TOO SLOW!");
+            Serial.println("Tick took too long! Alert!");
         }
     }
 }
